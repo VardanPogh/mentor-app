@@ -86,7 +86,6 @@ npx sequelize-cli db:seed:all
     npx sequelize-cli db:migrate
     npx sequelize-cli db:seed:all
     ```
-[README.md](README.md)
 5. **Start the server:**
     ```sh
     npm start
