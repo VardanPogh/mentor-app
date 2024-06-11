@@ -1,0 +1,116 @@
+<%- include('partials/header') %>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2>Register</h2>
+                </div>
+                <div class="card-body">
+                    <div id="errorContainer" class="text-danger"></div>
+
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password:</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">First Name:</label>
+                            <input type="text" class="form-control" id="name" name="firstName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Last Name:</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Type:</label>
+                            <select class="form-select" id="type" name="type" required>
+                                <option value="mentor">Mentor</option>
+                                <option value="mentee">Mentee</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="position" class="form-label">Position:</label>
+                            <input type="text" class="form-control" id="position" name="position">
+                        </div>
+                        <div class="mb-3">
+                            <label for="fieldId" class="form-label">Field:</label>
+                            <select class="form-select" id="fieldId" name="fieldId" required>
+                                <% professions.forEach(profession => { %>
+                                    <option value="<%= profession.id %>"><%= profession.title %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description:</label>
+                            <textarea class="form-control" id="description" name="description"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="education" class="form-label">Education:</label>
+                            <input type="text" class="form-control" id="education" name="education">
+                        </div>
+                        <div class="mb-3">
+                            <label for="experience" class="form-label">Experience:</label>
+                            <input type="text" class="form-control" id="experience" name="experience">
+                        </div>
+                        <div class="mb-3">
+                            <label for="about" class="form-label">About:</label>
+                            <textarea class="form-control" id="about" name="about"></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-warning">Register</button>
+                        </div>
+                    </form>
+                    <div class="mt-3 text-center">
+                        <p>Already have an account? <a href="/login" class="btn btn-secondary">Login</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+
+<script>
+    $(document).ready(function() {
+        $('#registerForm').submit(function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            $('#errorContainer').empty();
+
+            // Get form data
+            var formData = $(this).serialize();
+
+            // Send registration request using jQuery AJAX
+            $.ajax({
+                type: 'POST',
+                url: '/api/auth/register',
+                data: formData,
+                success: function(response) {
+                    // Handle successful registration
+                    if (response?.data?.token) {
+                        sessionStorage.setItem('token',response.data.token)
+                    }
+                    // Redirect to user list page
+                    window.location.href = '/';
+                },
+                error: function(xhr, status, error) {
+                    // Handle register error
+                    const errors = xhr.responseJSON;
+                    if (errors && errors.length > 0) {
+                        // Display error messages
+                        const errorContainer = $('#errorContainer');
+                        errors.forEach(function(error) {
+                            errorContainer.append('<p>' + error.message + '</p>');
+                        });
+                    }
+                }
+            });
+        });
+    });
+</script>

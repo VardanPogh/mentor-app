@@ -1,0 +1,88 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <h1 class="mb-4">Edit Profile</h1>
+
+    <form id="editProfileForm">
+        <div id="errorContainer" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label for="firstName" class="form-label">First Name:</label>
+            <input type="text" id="firstName" name="firstName" class="form-control" value="<%= user.firstName %>">
+        </div>
+        <div class="mb-3">
+            <label for="lastName" class="form-label">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" class="form-control" value="<%= user.lastName %>">
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" id="email" name="email" class="form-control" value="<%= user.email %>">
+        </div>
+        <div class="mb-3">
+            <label for="type" class="form-label">Type:</label>
+            <select id="type" name="type" class="form-select">
+                <option value="mentor" <%= user.type === 'mentor' ? 'selected' : '' %>>Mentor</option>
+                <option value="mentee" <%= user.type === 'mentee' ? 'selected' : '' %>>Mentee</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="position" class="form-label">Position:</label>
+            <input type="text" id="position" name="position" class="form-control" value="<%= user.position %>">
+        </div>
+        <div class="mb-3">
+            <label for="field" class="form-label">Field:</label>
+            <select id="field" name="fieldId" class="form-select">
+                <% fields.forEach(field => { %>
+                    <option value="<%= field.id %>" <%= field.id == user.fieldId ? 'selected' : '' %>><%= field.title %></option>
+                <% }) %>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description:</label>
+            <textarea id="description" name="description" class="form-control"><%= user.description %></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="education" class="form-label">Education:</label>
+            <input type="text" id="education" name="education" class="form-control" value="<%= user.education %>">
+        </div>
+        <div class="mb-3">
+            <label for="experience" class="form-label">Experience:</label>
+            <input type="text" id="experience" name="experience" class="form-control" value="<%= user.experience %>">
+        </div>
+        <div class="mb-3">
+            <label for="about" class="form-label">About:</label>
+            <textarea id="about" name="about" class="form-control"><%= user.about %></textarea>
+        </div>
+        <button type="button" class="btn btn-warning mb-4" onclick="submitForm()">Save Changes</button>
+    </form>
+</div>
+
+<%- include('partials/footer') %>
+
+<script>
+    function submitForm() {
+        const formData = $('#editProfileForm').serializeObject();
+        const userId = '<%= user.id %>';
+
+        $.ajax({
+            url: `/profile/edit/${userId}`,
+            type: 'PUT',
+            data: formData,
+            success: function(response) {
+                // Redirect to user profile page
+                window.location.href = `/profile/${userId}`;
+            },
+            error: function(xhr, status, error) {
+                console.error('Error updating profile:', error);
+                const errors = xhr.responseJSON;
+                if (errors && errors.length > 0) {
+                    // Display error messages
+                    const errorContainer = $('#errorContainer');
+                    errors.forEach(function(error) {
+                        errorContainer.append('<p>' + error.message + '</p>');
+                    });
+                }
+            }
+        });
+    }
+</script>

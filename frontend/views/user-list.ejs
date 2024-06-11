@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <h1>All Users</h1>
+
+    <form method="GET" action="/" class="mb-4">
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label for="firstName" class="form-label">First Name:</label>
+                <input type="text" id="firstName" name="firstName" class="form-control" value="<%= typeof firstName !== 'undefined' ? firstName : '' %>">
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="lastName" class="form-label">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" class="form-control" value="<%= typeof lastName !== 'undefined' ? lastName : '' %>">
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="type" class="form-label">Type:</label>
+                <select id="type" name="type" class="form-select">
+                    <option value="">All</option>
+                    <option value="mentor" <%= type === 'mentor' ? 'selected' : '' %>>Mentor</option>
+                    <option value="mentee" <%= type === 'mentee' ? 'selected' : '' %>>Mentee</option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="field" class="form-label">Field:</label>
+                <select id="field" name="fieldId" class="form-select">
+                    <option value="">All</option>
+                    <% fields.forEach(field => { %>
+                        <option value="<%= field.id %>" <%= field.id == fieldId ? 'selected' : '' %>><%= field.title %></option>
+                    <% }) %>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-warning">Search</button>
+    </form>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Type</th>
+            <th>Position</th>
+            <th>Field</th>
+            <th>Description</th>
+            <th>Education</th>
+            <th>Experience</th>
+            <th>About</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% users.forEach(user => { %>
+            <tr onclick="redirectUserPage(<%= user.id %>)" style="cursor: pointer;">
+                <td><%= user.firstName %></td>
+                <td><%= user.lastName %></td>
+                <td><%= user.email %></td>
+                <td><%= user.type %></td>
+                <td><%= user.position %></td>
+                <td><%= user.field ? user.field.title : '' %></td>
+                <td><%= user.description %></td>
+                <td><%= user.education %></td>
+                <td><%= user.experience %></td>
+                <td><%= user.about %></td>
+            </tr>
+        <% }) %>
+        </tbody>
+    </table>
+</div>
+
+<%- include('partials/footer') %>
+
+<script>
+    function redirectUserPage (userId) {
+        window.location.href = '/profile/' + userId;
+    }
+</script>
